@@ -1,18 +1,3 @@
-# ---
-# jupyter:
-#   jupytext:
-#     formats: ipynb,py
-#     text_representation:
-#       extension: .py
-#       format_name: light
-#       format_version: '1.5'
-#       jupytext_version: 1.13.7
-#   kernelspec:
-#     display_name: Python 3 (ipykernel)
-#     language: python
-#     name: python3
-# ---
-
 from datetime import date
 from datetime import datetime
 from bd.secrets import bot_id, port
@@ -27,18 +12,18 @@ def date_suffix(day):
 
 
 def David_and_Alex():
-    
+
     age = date_suffix(currYear - 1996)
-    
+
     send_message(f"🎂🌟Happy {age} birthday, Alex and David!!🌟🎂\n\nHope you both have a great day! Love you buddies!", bot_id)
 
 
 def send_bday_message(data):
-    
+
     today = date.today()
     currYear = today.year
     today = str(today)[5:]
-    
+
     #Loop along dictionary keys
     for key, value in data['birthdays'].items():
 
