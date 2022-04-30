@@ -22,7 +22,7 @@ def bot_response():
     
     if data['name'] != 'Birthday Bot':
         
-        if re.match(r"^@(birthdaybot|bb) (menu|help)", data['text']):
+        if re.match(r"^@(birthdaybot|bb|BB|Birthdaybot) (Menu|Help|menu|help)", data['text']):
             send_message("MENU\n------\n\
 [1.] Type \"@bb 1\" or \"@bb next birthday\" for the next buddy birthday\n\
 [2.] Type \"@bb 2\" or \"@bb birthdays this month\" to list any buddy birthdays this month\n\

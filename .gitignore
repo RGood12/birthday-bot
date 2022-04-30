@@ -1,6 +1,7 @@
 bd/birthdays.json
 bd/secrets.py
 bday_env/
+nohup.out
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

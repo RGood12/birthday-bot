@@ -13,7 +13,7 @@ def nearest_bday(date_schedule, today):
     dates = date_schedule
     search_dates = [date for date in dates if date >= today]
     date = min(search_dates, key=keyfunc)
-    return (date - today).days, date.strftime('%Y-%m-%d')
+    return ((date - today).days+1), date.strftime('%Y-%m-%d')
 
 
 def all_bdays():
