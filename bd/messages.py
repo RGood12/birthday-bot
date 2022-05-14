@@ -1,7 +1,7 @@
 from datetime import date
 from discord import Webhook, RequestsWebhookAdapter
 from datetime import datetime
-from bd.secrets import bot_id, port, discord_webhook
+from bd.secrets import bot_id, port, brock_id, discord_webhook
 from bd.groupme import *
 
 
@@ -22,7 +22,7 @@ def Brock():
     age = date_suffix(currYear - 1995)
 
     webhook = Webhook.from_url(discord_webhook, adapter=RequestsWebhookAdapter())
-    webhook.send(f"🎂🌟Happy {age} birthday, Brock (Funnier Alex)!🌟🎂\n\nHope you have a great day!!")
+    webhook.send(f"<@{brock_id}> 🎂🌟Happy {age} birthday, Brock (Funnier Alex)!🌟🎂\n\nHope you have a great day!!")
 
 def send_bday_message(data):
 
