@@ -1,148 +1,113 @@
-from datetime import datetime
-from time import strptime
+from datetime import date, datetime
+from operator import attrgetter
 import json
 
-def nearest(items, pivot):
-    return min(items, key=lambda x: abs(x - pivot))
+
+def date_suffix(day):
+    if 3 < day < 21 or 23 < day < 31:
+        return f'{day}th'
+    else:
+        return {1: f'{day}st', 2: f'{day}nd', 3: f'{day}rd'}[day % 10]
 
 
-def keyfunc(date):
-    return (date - datetime.today()).days
+def init_data():
+    # reads birthdays.json file 
+    with open('bd/birthdays.json') as d:
+        data = json.load(d)
+    return data
 
-def nearest_bday(date_schedule, today):
-    dates = date_schedule
-    search_dates = [date for date in dates if date >= today]
-    date = min(search_dates, key=keyfunc)
-    return ((date - today).days+1), date.strftime('%Y-%m-%d')
+
+def age_calc(data, birthday):
+    
+    today = date.today()
+    birthday = datetime.strptime(birthday, '%Y-%m-%d')
+    
+    return today.year - birthday.year - ((today.month, today.day) < (birthday.month, birthday.day))
+
+
+def days_until(birthday):
+    
+    today = datetime.today()
+    birthday = datetime.strptime(birthday, '%Y-%m-%d')
+    birthday = birthday.replace(year=today.year)
+    
+    diff = birthday - today
+    return (diff.days+1)
+
+
+class Buddy():
+    
+    def __init__(self, name, birthday, age, days_until, gm_id):
+        self.name = name
+        self.birthday = birthday
+        self.age = age
+        self.days_until = days_until
+        self.gm_id = gm_id
+    
+    def __repr__(self):
+        return '{' + self.name + ', ' + self.birthday + ', ' + str(self.age) + ', ' + str(self.days_until) + ', ' + str(self.gm_id) + '}'
+
+
+def generate_buddies():
+    data = init_data()
+    buddies = []
+    for i in range(0, len(data['birthdays'])):
+        buddies.append(Buddy(list(data['birthdays'])[i], 
+                 list(data['birthdays'].values())[i]['birthday'], 
+                 age_calc(data, list(data['birthdays'].values())[i]['birthday']), 
+                 days_until(list(data['birthdays'].values())[i]['birthday']),
+                 list(data['birthdays'].values())[i]['gmID']))
+    return buddies
+
+
+def nearest_bday(buddies):
+    
+    buddies.sort(key=lambda x: (x.days_until<0, x.days_until))
+    return buddies[0]
+
+
+def bdays_in_month(buddies, month):
+    
+    birthdays_this_month = []
+    
+    for i in range(0, len(buddies)):
+        
+        birthday = datetime.strptime(buddies[i].birthday, '%Y-%m-%d')
+        
+        if birthday.month == month and birthday.month >= datetime.today().month:
+            birthdays_this_month.append(f"{buddies[i].name}'s on {birthday.strftime('%B')} {date_suffix(birthday.day)}, turning {buddies[i].age+1} this year")
+        elif birthday.month == month and birthday.month < datetime.today().month:
+            birthdays_this_month.append(f"{buddies[i].name}'s on {birthday.strftime('%B')} {date_suffix(birthday.day)}, turned {buddies[i].age-1} this year")
+        elif birthday.month == month and birthday.month == datetime.today().month:
+            birthdays_this_month.append(f"{buddies[i].name}'s on {birthday.strftime('%B')} {date_suffix(birthday.day)}, turning {buddies[i].age+1}")
+        
+    return birthdays_this_month
 
 
 def all_bdays():
-    # defines today, and current year
-    today = datetime.today()
-    currYear = today.year
     
-    # reads birthdays.json file 
-    f = open('bd/birthdays.json')
-    data = json.load(f)
+    buddies = generate_buddies()
+    buddies.sort(key=attrgetter('name'))
 
-    bday, all_bdays = [], []
-    for key, value in data['birthdays'].items():
-
-        age = (currYear - int(key[:4]))
-        bday = key[5:].replace('-', '/')
-        all_bdays.append(f"{value['buddy']}: {bday} - Turning: {age} in {currYear}")
+    all_bdays = []
     
-    all_bdays = '\n'.join(all_bdays)
+    for i in range(0, len(buddies)):
+        birthday = datetime.strptime(buddies[i].birthday, '%Y-%m-%d')
+        birthday = f"{birthday.strftime('%B')} {date_suffix(birthday.day)}, {birthday.year}"
+
+        all_bdays.append(f"• {buddies[i].name}: {birthday}")
+
+    all_bdays = "\n".join(all_bdays)
     return all_bdays
 
 
-def get_nearest_bday():
-
-    # defines today, and current year
-    today = datetime.today()
-    currYear = today.year
-
-    # reads birthdays.json file 
-    f = open('bd/birthdays.json')
-    data = json.load(f)
-
-    # creates a list of the birthdays from the .json file
-    birthday_list = list(data['birthdays'].keys())
-    # converts the birthdays to datetime, then replaces the birth year with the current year for calculation
-    birthday_list_current = [datetime.strptime(x,'%Y-%m-%d') for x in birthday_list]
-    birthday_list_current = [x.replace(year=currYear) for x in birthday_list_current]
-
-    # combines actual birthdate with birthdate + current year for easy lookup
-    res = dict(zip(birthday_list, birthday_list_current))
-
-    # calculates days until the nearest birthday, and the date (in the current year)
-    days_until, date = nearest_bday(birthday_list_current, today)
-
-    # looks up the actual birthday from the current year since it's been converted
-    actual_bday = list(res.keys())[list(res.values()).index(datetime.strptime(date,'%Y-%m-%d'))]
-    buddy = data['birthdays'][actual_bday]['buddy']
-
-    short_date = actual_bday[5:].replace('-', '/')
-
-    return days_until, buddy, short_date
-
-
-def birthdays_this_month():
-    # defines today, and current year
-    currMonth = datetime.now().month
-
-    # reads birthdays.json file 
-    f = open('bd/birthdays.json')
-    data = json.load(f)
-
-
-    date = []
-    buddy = []
-    for key, value in data['birthdays'].items():
-
-        month = key[5:]
-        month = int(month[:2])
-
-        if month == currMonth:
-            date.append(key)
-            buddy.append(value)
-
-    total = len(date)
-    if total != 0:
-        filtered_dict = {key: value for key, value in data['birthdays'].items() if key in date}
-
-        birthdays_this_month = []
-        for i in range(0, len(date)):
-            birthdays_this_month.append(f"{buddy[i]['buddy']}'s on {date[i][5:].replace('-', '/')}")
-
-        birthdays_this_month = ', '.join(birthdays_this_month)
-
-        return total, birthdays_this_month
-    if total == 0:
-        return total
-
-
-def month_conversion(month):
-    try:
-        month = month[:3]
-        month = strptime(month,'%b').tm_mon
-    except:
-        month = int(month)
-
-    return month
-
-
-def birthdays_given_month(month):
-
-    currMonth = month_conversion(month)
-
-    # reads birthdays.json file 
-    f = open('bd/birthdays.json')
-    data = json.load(f)
-
-
-    date = []
-    buddy = []
-    for key, value in data['birthdays'].items():
-
-        month = key[5:]
-        month = int(month[:2])
-
-        if month == currMonth:
-            date.append(key)
-            buddy.append(value)
-
-    total = len(date)
-    if total != 0:
-        filtered_dict = {key: value for key, value in data['birthdays'].items() if key in date}
-
-        birthdays_this_month = []
-        for i in range(0, len(date)):
-            birthdays_this_month.append(f"{buddy[i]['buddy']}'s on {date[i][5:].replace('-', '/')}")
-
-        birthdays_this_month = '\n'.join(birthdays_this_month)
-
-        return total, birthdays_this_month, currMonth
-    if total == 0:
-        return total, currMonth
-
+def bday_today():
+    
+    buddies = generate_buddies()
+    
+    for i in range(0, len(buddies)):
+        if buddies[i].days_until == 0:
+            message = f"@{buddies[i].name} 🎂🌟Happy {date_suffix(buddies[i].age)} birthday, {buddies[i].name}!!🌟🎂\n\nHope you have a great day! Love you buddy!"
+            gm_id = buddies[i].gm_id
+            name_len = len(buddies[i].name)
+            return message, gm_id, name_len

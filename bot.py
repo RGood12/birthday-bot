@@ -3,8 +3,8 @@ from flask import jsonify
 from waitress import serve
 from bd.secrets import port, bot_id
 from bd.groupme import send_message
-from bd.calculations import all_bdays
-from bd.responses import bb1_response, bb2_response, bb3_response
+from bd.calculations import *
+from bd.responses import *
 import requests, re
 
 app = Flask(__name__)
@@ -17,6 +17,7 @@ def shortener():
 
 @app.route('/bdaybot', methods=['POST'])
 def bot_response():
+    
     data = request.get_json()
     data = {k.lower(): v for k, v in data.items()}
     
@@ -49,5 +50,4 @@ def bot_response():
     return "1"
 
 if __name__ == '__main__':
-    # you sould put the port in a config file
     serve(app, host='0.0.0.0', port = port)
