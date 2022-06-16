@@ -13,3 +13,7 @@ Correcting date countdown value
 v1.0.2
 ---
 Adding ability to post in B-Co Discord to mention Brock (who is not in the GroupMe) for his birthday
+
+v2.0
+---
+Significantly cleaned and reworked much of the calculations and messages. Utilized objects to hopefully make future features easier to add!
