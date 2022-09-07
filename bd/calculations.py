@@ -74,13 +74,21 @@ def bdays_in_month(buddies, month):
         
         birthday = datetime.strptime(buddies[i].birthday, '%Y-%m-%d')
         
-        if birthday.month == month and birthday.month >= datetime.today().month:
-            birthdays_this_month.append(f"{buddies[i].name}'s on {birthday.strftime('%B')} {date_suffix(birthday.day)}, turning {buddies[i].age+1} this year")
-        elif birthday.month == month and birthday.month < datetime.today().month:
-            birthdays_this_month.append(f"{buddies[i].name}'s on {birthday.strftime('%B')} {date_suffix(birthday.day)}, turned {buddies[i].age-1} this year")
-        elif birthday.month == month and birthday.month == datetime.today().month:
-            birthdays_this_month.append(f"{buddies[i].name}'s on {birthday.strftime('%B')} {date_suffix(birthday.day)}, turning {buddies[i].age+1}")
+        if birthday.month == datetime.today().month:
+            if birthday.month == month and birthday.day >= datetime.today().day:
+                birthdays_this_month.append(f"{buddies[i].name}'s on {birthday.strftime('%B')} {date_suffix(birthday.day)}, turning {buddies[i].age+1}")
+            elif birthday.month == month and birthday.day < datetime.today().day:
+                birthdays_this_month.append(f"{buddies[i].name}'s on {birthday.strftime('%B')} {date_suffix(birthday.day)}, turned {buddies[i].age}")
+            elif birthday.month == month and birthday.day == datetime.today().day:
+                birthdays_this_month.append(f"{buddies[i].name}'s on {birthday.strftime('%B')} {date_suffix(birthday.day)}, turning {buddies[i].age+1}")
         
+        else:
+            if birthday.month == month and birthday.month >= datetime.today().month:
+                birthdays_this_month.append(f"{buddies[i].name}'s on {birthday.strftime('%B')} {date_suffix(birthday.day)} - turning {buddies[i].age+1} this year")
+            elif birthday.month == month and birthday.month < datetime.today().month:
+                birthdays_this_month.append(f"{buddies[i].name}'s on {birthday.strftime('%B')} {date_suffix(birthday.day)} - turned {buddies[i].age} this year")
+            elif birthday.month == month and birthday.month == datetime.today().month:
+                birthdays_this_month.append(f"{buddies[i].name}'s on {birthday.strftime('%B')} {date_suffix(birthday.day)} - turning {buddies[i].age+1}")
     return birthdays_this_month
 
 
@@ -109,5 +117,5 @@ def bday_today():
         if buddies[i].days_until == 0:
             message = f"@{buddies[i].name} 🎂🌟Happy {date_suffix(buddies[i].age)} birthday, {buddies[i].name}!!🌟🎂\n\nHope you have a great day! Love you buddy!"
             gm_id = buddies[i].gm_id
-            name_len = len(buddies[i].name)
+            name_len = len(buddies[i].name)+1
             return message, gm_id, name_len

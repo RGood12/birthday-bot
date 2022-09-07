@@ -18,13 +18,13 @@ def bb1_response():
 def bb2_response():
     
     buddies = generate_buddies()
-    bdays = bdays_in_month(buddies, datetime.today().month)
-    total = len(bdays)
+    total = len(bdays_in_month(buddies, datetime.today().month))
+    bdays = '\n∙ '.join(bdays_in_month(buddies, datetime.today().month))
     
     if total > 1:
-        send_message(f"There are {total} birthdays this month: {bdays}", bot_id)
+        send_message(f"There are {total} birthdays this month:\n\n∙ {bdays}", bot_id)
     if total == 1:
-        send_message(f"Well, look who's special! There's only {total} birthday this month: {bdays}", bot_id)
+        send_message(f"Well, look who's special! There's only {total} birthday this month:\n\n∙ {bdays}", bot_id)
     if total == 0:
             send_message(f"There are no birthdays this month!", bot_id)
 
@@ -44,6 +44,6 @@ def bb3_response(text):
     if total > 1:
         send_message(f"There are {total} birthdays in {request_month}:\n\n∙ {bdays}", bot_id)
     if total == 1:
-        send_message(f"Well, look who's special! There's only {total} birthday in {request_month}: {bdays}", bot_id)
+        send_message(f"Well, look who's special! There's only {total} birthday in {request_month}:\n\n∙ {bdays}", bot_id)
     if total == 0:
         send_message(f"There are no birthdays in {request_month}!", bot_id)

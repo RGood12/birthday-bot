@@ -1,4 +1,4 @@
-from bd.messages import David_and_Alex, Brock, send_bday_message
+from bd.messages import *
 
 if __name__ == "__main__":
 
