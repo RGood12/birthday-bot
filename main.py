@@ -1,4 +1,5 @@
 from bd.messages import *
+import requests
 
 if __name__ == "__main__":
 

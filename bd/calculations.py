@@ -108,7 +108,6 @@ def all_bdays():
     all_bdays = "\n".join(all_bdays)
     return all_bdays
 
-
 def bday_today():
     
     buddies = generate_buddies()
@@ -118,4 +117,4 @@ def bday_today():
             message = f"@{buddies[i].name} 🎂🌟Happy {date_suffix(buddies[i].age)} birthday, {buddies[i].name}!!🌟🎂\n\nHope you have a great day! Love you buddy!"
             gm_id = buddies[i].gm_id
             name_len = len(buddies[i].name)+1
-            return message, gm_id, name_len
+            return message, gm_id, buddies[i].name, name_len
