@@ -1,6 +1,6 @@
 from datetime import date, datetime
 from operator import attrgetter
-import json
+import json, os, random
 
 
 def date_suffix(day):
@@ -108,13 +108,35 @@ def all_bdays():
     all_bdays = "\n".join(all_bdays)
     return all_bdays
 
+def gen_message(name, age):
+    
+    messages = [f"@{name} Happy {age} Birthday, bucket head!! 🎉🍰\n\nTo celebrate, here's a favorite picture of you that always brings a smile to my face.",
+    f"@{name} To the biggest goofball I know, Happy {age} Birthday!! 🎂🎁\n\nHere's a favorite picture of you, capturing your infectious spirit.",
+    f"@{name} Another year older, ya nut! Happy {age} Birthday!! 🥳🎈\n\nAnd here's a cherished image of you to remind us of the good times we've had.",
+    f"@{name} Happy {age} Birthday, bud-ee!! 🎈🎉\n\nAs a special gift, here's a favorite picture of you to mark this special day.",
+    f"@{name} Wishing you a day filled with sweetness and joy, goofball!! 🎁🍰 Happy {age} Birthday!\n\nHere's a special picture of you to celebrate.",
+    f"@{name} Happy {age} Birthday, you nut!! 🥳🎂\n\nMay your day be as extraordinary as you are. Here's a cherished image to remind you of all the fun times.",
+    f"@{name} Another year, another reason to celebrate you, bucket head!! 🎈🎁\n\nHave an amazing {age} birthday and enjoy this special picture of you.",
+    f"@{name} To my favorite goofball, Happy {age} Birthday!! 🍰🎉\n\nKeep spreading smiles and laughter. Here's a cherished image of you to remember the good times.",
+    f"@{name} Happy {age} Birthday, ya nut!! 🎂🎈\n\nYour uniqueness adds so much flavor to our lives. Enjoy your special day and this special picture.",
+    f"@{name} Wishing a fantastic {age} birthday to my dear bud-ee!! 🥳🎁\n\nMay your day be filled with joy and unforgettable moments. Here's a favorite picture to mark this special occasion."]
+    
+    return random.choice(messages)
+
 def bday_today():
     
     buddies = generate_buddies()
-    
-    for i in range(0, len(buddies)):
-        if buddies[i].days_until == 0:
-            message = f"@{buddies[i].name} 🎂🌟Happy {date_suffix(buddies[i].age)} birthday, {buddies[i].name}!!🌟🎂\n\nHope you have a great day! Love you buddy!"
-            gm_id = buddies[i].gm_id
-            name_len = len(buddies[i].name)+1
-            return message, gm_id, buddies[i].name, name_len
+   
+    buddies_bday_today = [obj for obj in buddies if obj.days_until == 0]
+    if buddies_bday_today:
+        blist = []
+        for buddy in buddies_bday_today:
+            name, age = buddy.name, date_suffix(buddy.age)
+            message = gen_message(name, age)
+            gm_id = buddy.gm_id
+            name_len = len(buddy.name)+1
+            blist.append((message, gm_id, name, name_len))
+        return blist
+    else:
+        return None
+        
