@@ -28,8 +28,8 @@ def send_bday_message():
 
             # gets a photo of buddy from google respective buddy drive folder
             pic = get_photo(name, drive)
-            logging.error(f"INFO: Successfully grabbed picture for {name}: {pic}")
-
+            pic_stats = os.stat(pic)
+            logging.error(f"INFO: Successfully grabbed picture for {name}: {round(pic_stats.st_size / (1024 * 1024), 2)} MB")
             # uploads that photo to GroupMe's image service
             pic_url = gm_image_service(pic)
             logging.error(f"INFO: GM Image Service URL: {pic_url}")
