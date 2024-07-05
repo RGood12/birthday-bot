@@ -1,7 +1,13 @@
+# Secrets
 bd/birthdays.json
 bd/secrets.py
+bd/service-credentials.json
+
+# Envs
 bday_env/
+bb_env/
 nohup.out
+bday_beta_env/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
