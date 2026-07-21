@@ -1,29 +1,21 @@
-import smtplib
-from email.mime.text import MIMEText
-from bd.secrets import recipient_email, recipient_mobile, APP_PASSWORD
+import requests
+from bd.secrets import API_KEY
 
-sender = "randylinuxserver@gmail.com"
-recipients = [recipient_mobile]
-password = APP_PASSWORD
+def send_alert(subject, body):
+    response = requests.post(
+        "https://api.resend.com/emails",
+        headers={
+            "Authorization": f"Bearer {API_KEY}",
+            "Content-Type": "application/json",
+        },
+        json={
+            "from": "Birthday Bot <onboarding@resend.dev>",
+            "to": ["r.goodson12@gmail.com"],
+            "subject": subject,
+            "text": body,
+        },
+        timeout=10,
+    )
 
-
-def send_error_alert(*args):
-
-    msg = MIMEText(f"\n\nThere was an error sending {args[0]}'s birthday message: {args[1]}")
-    msg['Subject'] = " ERROR! Birthday Bot"
-    msg['From'] = sender
-    msg['To'] = ', '.join(recipients)
-    with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp_server:
-       smtp_server.login(sender, password)
-       smtp_server.sendmail(sender, recipients, msg.as_string())
-
-def send_nophoto_alert(*args):
-    
-    msg = MIMEText(f"\n\nWarning: {args[0]}'s birthday is in {args[1]} days but there are no photos available in Google Drive")
-    msg['Subject'] = " WARNING! Missing Buddy Photo"
-    msg['From'] = sender
-    msg['To'] = ', '.join(recipients)
-    with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp_server:
-       smtp_server.login(sender, password)
-       smtp_server.sendmail(sender, recipients, msg.as_string())
+    response.raise_for_status()
 

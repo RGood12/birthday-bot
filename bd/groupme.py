@@ -67,6 +67,7 @@ def gm_image_service(pic):
                     data=data,
                     headers={'Content-Type': 'image/jpeg',
                              'X-Access-Token': access_token})
+    
     res = res.content
 
     # Convert bytes data to a string

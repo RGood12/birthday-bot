@@ -50,6 +50,10 @@ def send_bday_message():
             logging.error(f"INFO: Successfully grabbed picture for {name}: {round(pic_stats.st_size / (1024 * 1024), 2)} MB")
             # uploads that photo to GroupMe's image service
             pic_url = gm_image_service(pic)
+            if len(pic_url) < 1:
+                send_alert("Birthday Bot Error", f"No GM Image Service URL returned for {name}")
+                logging.error("ERROR: No GM Image Service URL returned")
+                quit()
             logging.error(f"INFO: GM Image Service URL: {pic_url}")
 
             # sends message to GroupMe
@@ -59,13 +63,13 @@ def send_bday_message():
             os.remove(pic)
             logging.error(f"INFO: Picture for {name} successfully removed")
     except IndexError:
-        send_error_alert(name, "No photo available in Google Drive")
+        send_alert("Birthday Bot Error", f"No photo available for {name} in Google Drive")
         logging.error(f"ERROR: No photo available in Google Drive")
         logging.error(f"Data: {gmID}, {name}, {name_len}")
         logging.error("-------------------------------")
         quit()
     except Exception as e:
-        send_error_alert(name, e)
+        send_alert(f"Birthday Bot Error for {name}", e)
         logging.error(f"ERROR: {e}")
         logging.error(f"Data: {gmID}, {name}, {name_len}")
         logging.error("-------------------------------")
