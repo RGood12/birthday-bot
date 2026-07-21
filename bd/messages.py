@@ -69,7 +69,7 @@ def send_bday_message():
         logging.error("-------------------------------")
         quit()
     except Exception as e:
-        send_alert(f"Birthday Bot Error for {name}", e)
+        send_alert(f"Birthday Bot Error for {name}", f"{e}")
         logging.error(f"ERROR: {e}")
         logging.error(f"Data: {gmID}, {name}, {name_len}")
         logging.error("-------------------------------")
